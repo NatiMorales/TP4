@@ -27,17 +27,10 @@ class Contacto {
 }
 
 class Agenda{
-    #contactos;
     #tamanio;
-    constructor(){
-        this.#contactos = [];
-        this.#tamanio = 3;
-    }
-    get contactos(){
-        return this.#contactos;
-    }
-    set contactos(nuevoContactos){
-        this.#contactos = nuevoContactos;
+    constructor(tamanio){
+        this.contactos = [];
+        this.#tamanio = tamanio;
     }
     get tamanio(){
         return this.#tamanio;
@@ -46,7 +39,11 @@ class Agenda{
         this.#tamanio = nuevoTamanio;
     }
     aniadirContacto(contacto){
-        this.contactos.push(contacto);
+        if(this.agendaLlena()){
+            alert("agenda llena")
+        } else {
+            this.contactos.push(contacto);
+        }
     }
     existeContacto(contacto){
         for(let nroContacto = 0; nroContacto < this.contactos.length; nroContacto++){
@@ -74,20 +71,25 @@ class Agenda{
         return this.contactos.splice(indice,1);
     }
     agendaLlena(){
-        if(this.tamanio === 10){
+        if(this.contactos.length === this.tamanio){
             document.write("<p>Agenda llena, no puede seguir ingresando contactos</p>");
-        } else if (this.tamanio < 10){
-            this.huecosLibres();
+            return true;
+        } else{
+            return false;
         }
     }
     huecosLibres(){
-        if(this.tamanio < 10){
-            document.write(`<p>Espacios libres de la agenda: ${10-this.tamanio}</p>`);
+        if(this.contactos.length < this.tamanio){
+            let huecosLibres = this.tamanio - this.contactos.length;
+            document.write(`<p>Espacios libres de la agenda: ${huecosLibres}</p>`);
+            console.log(`Espacios libres de la agenda: ${huecosLibres}`);
+        } else {
+            this.agendaLlena();
         }
     }
 }
 
-const agenda = new Agenda();
+const agenda = new Agenda(10);
 
 do{
     const opcion = prompt(`Seleccione una opción: 1- añadir contacto, 2- consultar existencia, 3- listar contactos, 4- buscar contacto, 5- eliminar contacto, 6- agenda llena, 7- huecos libres`);
@@ -97,7 +99,7 @@ do{
             const telefono = prompt("Ingrese un telefono");
             const contacto = new Contacto(nombre,telefono);
             agenda.aniadirContacto(contacto);
-            console.log(agenda.contactos)
+            console.log(agenda.contactos);
             break;
         case "2":
             const nombreExistente = prompt("Ingrese un nombre");
